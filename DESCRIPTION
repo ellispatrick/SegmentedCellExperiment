@@ -1,0 +1,16 @@
+Package: SegmentedCellExperiment
+Type: Package
+Title: S4 Class for imaging cytometry and segmented spatial 'omics data.
+Version: 0.0.1
+Author: Nicolas Canete and Ellis Patrick
+Maintainer: Ellis Patrick <ellis.patrick@sydney.edu.au>
+Description: This package describes a class for storing data from segmented imaging cytometry and spatial omics data.
+License: GPL (>=2)
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+Imports:
+    BiocGenerics,
+    methods,
+    S4Vectors
+Roxygen: list(markdown = TRUE)
