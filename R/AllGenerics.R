@@ -1,3 +1,5 @@
+### Get location information for each cell.
+
 #' @export
 setGeneric("location", function(x, image = NULL, bind = FALSE) standardGeneric("location"))
 setMethod("location", "SegmentedCellExperiment", function(x, image = NULL, bind = TRUE) {
@@ -9,7 +11,8 @@ setMethod("location", "SegmentedCellExperiment", function(x, image = NULL, bind 
     }
     if (bind == TRUE) {
         class(x$location)
-        return(BiocGenerics::do.call("rbind", x$location))
+        return(cbind(imageID = rep(rownames(x), unlist(lapply(x[, "location"], nrow))), 
+            BiocGenerics::do.call("rbind", x$location)))
     }
     
 })
@@ -25,11 +28,13 @@ setMethod("location<-", "SegmentedCellExperiment", function(x, value, image = NU
     }
     
     if (nrow(value) == length(imageID(x))) {
+        value <- value[, c("cellID", "imageCellID", "x", "y", "cellType")]
         x[image, ]@listData$location <- S4Vectors::split(value, rep(image, unlist(lapply(x[image, 
             "location"], nrow))))
         return(x)
     }
 })
+
 
 
 
@@ -47,7 +52,7 @@ setMethod("imageID", "SegmentedCellExperiment", function(x, image = NULL) {
 
 
 
-### Get cellID
+### Get cellIDs
 
 #' @export
 setGeneric("cellID", function(x, image = NULL) standardGeneric("cellID"))
@@ -70,6 +75,8 @@ setMethod("cellID<-", "SegmentedCellExperiment", function(x, value) {
     loc$cellID <- value
     location(x) <- loc
 })
+
+
 
 
 ### Get imageCellID
@@ -100,8 +107,7 @@ setMethod("imageCellID<-", "SegmentedCellExperiment", function(x, value) {
 
 
 
-
-#### Access and add phenotype data to the object
+### Get and add phenotype data to the object
 
 #' @export
 setGeneric("phenotype", function(x, image = NULL, bind = TRUE) standardGeneric("phenotype"))
@@ -123,6 +129,9 @@ setMethod("phenotype<-", "SegmentedCellExperiment", function(x, value, image = N
 })
 
 
+
+
+### Get intensity information
 
 #' @export
 setGeneric("intensity", function(x, image = NULL, bind = FALSE) standardGeneric("intensity"))
@@ -160,7 +169,45 @@ setMethod("intensity<-", "SegmentedCellExperiment", function(x, value, image = N
 
 
 
-### Get imageCellID
+### Get morphology information
+
+#' @export
+setGeneric("morphology", function(x, image = NULL, bind = FALSE) standardGeneric("morphology"))
+setMethod("morphology", "SegmentedCellExperiment", function(x, image = NULL, bind = TRUE) {
+    if (!is.null(image)) {
+        x <- x[image, ]
+    }
+    if (bind == FALSE) {
+        return(x$morphology)
+    }
+    if (bind == TRUE) {
+        class(x$morphology)
+        return(BiocGenerics::do.call("rbind", x$morphology))
+    }
+    
+})
+
+#' @export
+setGeneric("morphology<-", function(x, value, image = NULL) standardGeneric("morphology<-"))
+setMethod("morphology<-", "SegmentedCellExperiment", function(x, value, image = NULL) {
+    if (is.null(image)) 
+        image <- rownames(x)
+    if (nrow(value) == length(image)) {
+        x[image, ]@listData$morphology <- value
+        return(x)
+    }
+    
+    if (nrow(value) == length(imageID(x))) {
+        x[image, ]@listData$morphology <- S4Vectors::split(value, rep(rownames(x), 
+            unlist(lapply(x$morphology, nrow))))
+        return(x)
+    }
+})
+
+
+
+
+### Get cell type information
 
 #' @export
 setGeneric("cellType", function(x, image = NULL) standardGeneric("cellType"))

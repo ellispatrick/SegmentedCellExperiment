@@ -1,23 +1,40 @@
 ---
-title: "SegmentedCellExperiment"
+title: "Introduction to SegmentedCellExperiment"
 author: "Ellis Patrick"
 date: "02/01/2020"
-output: html_document
-editor_options: 
-  chunk_output_type: console
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to SegmentedCellExperiment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(BiocStyle)
 ```
 
+A `SegmentedCellExperiment` is a class designed to store data from imaging cytometry (FISH, IMC, CycIF, spatial transcriptomics, ... ) that has already been segmented. Ideally this type of data can be used for point process models or nearest neighbour analysis. At the least this means that we have the location of each cell, potentially a call of its cell type and maybe information on protein/gene marker intensities or morphology. Below we will consider a few examples of data formats that can be transformed into a `SegmentedCellExperiment`.
 
-```{r}
+
+First, load the package.
+
+
+```{r setup, message=FALSE}
 library(SegmentedCellExperiment)
 ```
 
 
 ## Example 1 - Data resembles cellProfiler output
+
+Here we create a `SegmentedCellExperiment` from data that was output from cellProfiler or similar programs. This assumes that there are columns with the string *AreaShape_* and *Intensity_Mean* and that there are `ObjectNumber` and `ImageNumber` columns.
+
+Here we create toy cellProfiler data.
 
 ```{r}
 
@@ -40,15 +57,15 @@ cells$Intensity_Mean_CD4 <- rexp(n, 10)
 ```
 
 
+We can then create a `SegmentedCellExperiment` object.
+
 ```{r}
 cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
 ```
 
-
+Extract the location information and overwrite it as well.
 
 ```{r}
-### Get location information
-
 loc <- location(cellExp)
 head(loc)
 
@@ -56,18 +73,16 @@ location(cellExp) <- loc
 
 ```
 
-
+We can then set the cell types of each cell by extract and clustering marker intensity information.
 
 
 ```{r}
-### Cluster cell types
-
 intensities <- intensity(cellExp)
 kM <- kmeans(intensities,2)
 cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
-location(cellExp)
 
-
+loc <- location(cellExp)
+head(loc)
 ```
 
 
@@ -75,16 +90,16 @@ location(cellExp)
 
 ## Example 2 - Custom intensity and morphology column names
 
+Here we create toy data that has a slightly more fluid naming stucture.
+
 ```{r}
-
-### Generate some data
-
 set.seed(51773)
 
 n = 10
 
 cells <- data.frame(row.names = seq_len(n))
 cells$cellID <- seq_len(n)
+cells$imageCellID <- rep(seq_len(n/2),2)
 cells$imageID <- rep(1:2,c(n/2,n/2))
 cells$x <- runif(n)
 cells$y <- runif(n)
@@ -94,21 +109,21 @@ cells$intensity_CD8 <- rexp(n, 10)
 cells$intensity_CD4 <- rexp(n, 10)
 cells$cellType <- paste('cluster',sample(1:2,n,replace = TRUE), sep = '_')
 
+```
+
+We can then create a `SegmentedCellExperiment` object.
+
+```{r}
 
 cellExp <- SegmentedCellExperiment(cells, cellTypeString = 'cellType', intensityString = 'intensity_', morphologyString = 'shape_')
 
-
 ```
 
+Extract morphology information
 
 ```{r}
-### Cluster cell types
-
-intensities <- intensity(cellExp)
-kM <- kmeans(intensities,2)
-cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
-location(cellExp)
-
+morph <- morphology(cellExp)
+head(morph)
 
 ```
 
@@ -117,9 +132,10 @@ location(cellExp)
 
 ## Example 3 - Minimal example, cells only have spatial coordinates
 
+Here we generate data where we only know the location of each cell.
+
 ```{r}
 
-### Generate some data
 
 set.seed(51773)
 
@@ -133,13 +149,11 @@ cellExp <- SegmentedCellExperiment(cells)
 
 ```
 
-```{r}
-### Get location information
+Extract the location information which now also has cellIDs and imageIDs.
 
+```{r}
 loc <- location(cellExp)
 head(loc)
-
-location(cellExp) <- loc
 
 ```
 

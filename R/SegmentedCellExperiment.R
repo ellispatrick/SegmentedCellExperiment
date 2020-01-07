@@ -1,7 +1,7 @@
 #' The SegmentedCellExperiment class
 #'
-#' @param cellData A data frame that contains at least the columns [x] and [y] giving the location of each cell.
-#' @param cellProfiler A logical indicating that [cellData] is in a format similar to what cellProfiler outputs.
+#' @param cellData A data frame that contains at least the columns x and y giving the location of each cell.
+#' @param cellProfiler A logical indicating that cellData is in a format similar to what cellProfiler outputs.
 #' @param spatialCoords The column names corresponding to spatial coordinates. eg. x, y, z...
 #' @param cellTypeString The name of the column that contains cell type calls.
 #' @param intensityString A string which can be used to identify the columns which contain marker intensities. (This needs to be extended to take the column names themselves.)
@@ -39,6 +39,8 @@
 SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoords = c("x", 
     "y"), cellTypeString = NULL, intensityString = NULL, morphologyString = NULL, 
     cellIDString = NULL, imageCellIDString = NULL, imageIDString = NULL) {
+    
+    ### Check variable names
     
     if (!is.null(cellIDString)) {
         if (!cellIDString %in% colnames(cellData)) 
@@ -82,6 +84,7 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
     
     
     
+    ### Format variable names if not from cellProfiler output
     
     if (!cellProfiler) {
         
@@ -115,6 +118,7 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
         cellData$cellID <- as.character(cellData$cellID)
     }
     
+    ### Format variable names if cellProfiler output
     
     if (cellProfiler) {
         
@@ -133,20 +137,24 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
     }
     
     
+    ### Create location information
     
     df <- DataFrame(row.names = unique(cellData$imageID))
     
     if (!is.null(cellTypeString)) {
         cellData$cellType <- cellData[, cellTypeString]
-        location <- S4Vectors::split(DataFrame(cellData[, c("imageCellID", "cellID", 
-            "imageID", spatialCoords, "cellType")]), cellData$imageID)
+        location <- S4Vectors::split(DataFrame(cellData[, c("cellID", "imageCellID", 
+            spatialCoords, "cellType")]), cellData$imageID)
     } else {
         cellData$cellType <- NA
-        location <- S4Vectors::split(DataFrame(cellData[, c("imageCellID", "cellID", 
-            "imageID", spatialCoords, "cellType")]), cellData$imageID)
+        location <- S4Vectors::split(DataFrame(cellData[, c("cellID", "imageCellID", 
+            spatialCoords, "cellType")]), cellData$imageID)
     }
     
     df$location <- location
+    
+    
+    ### Create intensity and morphology information
     
     df$intensity <- S4Vectors::split(DataFrame(), cellData$imageID)
     df$morphology <- S4Vectors::split(DataFrame(), cellData$imageID)
@@ -159,13 +167,19 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
     
     if (!is.null(morphologyString)) {
         morphology <- cellData[, grep(morphologyString, colnames(cellData))]
-        colnames(morphology) <- gsub(morphologyString, "", morphology)
+        colnames(morphology) <- gsub(morphologyString, "", colnames(morphology))
         df$morphology <- S4Vectors::split(DataFrame(morphology), cellData$imageID)
     }
+    
+    
+    ### Create columns in DataFrame for storing phenotype information and potentially
+    ### images and masks.
     
     df$phenotype <- S4Vectors::split(DataFrame(), cellData$imageID)
     df$images <- S4Vectors::split(DataFrame(), cellData$imageID)
     df$masks <- S4Vectors::split(DataFrame(), cellData$imageID)
+    
+    ### Create SegmentedCellExperiment object.
     
     df <- new("SegmentedCellExperiment", df)
     df

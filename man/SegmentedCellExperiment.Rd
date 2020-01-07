@@ -19,9 +19,9 @@ SegmentedCellExperiment(
 )
 }
 \arguments{
-\item{cellData}{A data frame that contains at least the columns \link{x} and \link{y} giving the location of each cell.}
+\item{cellData}{A data frame that contains at least the columns x and y giving the location of each cell.}
 
-\item{cellProfiler}{A logical indicating that \link{cellData} is in a format similar to what cellProfiler outputs.}
+\item{cellProfiler}{A logical indicating that cellData is in a format similar to what cellProfiler outputs.}
 
 \item{spatialCoords}{The column names corresponding to spatial coordinates. eg. x, y, z...}
 
