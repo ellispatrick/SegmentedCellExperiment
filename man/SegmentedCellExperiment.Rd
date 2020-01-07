@@ -12,7 +12,10 @@ SegmentedCellExperiment(
   spatialCoords = c("x", "y"),
   cellTypeString = NULL,
   intensityString = NULL,
-  morphologyString = NULL
+  morphologyString = NULL,
+  cellIDString = NULL,
+  imageCellIDString = NULL,
+  imageIDString = NULL
 )
 }
 \arguments{
