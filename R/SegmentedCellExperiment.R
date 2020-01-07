@@ -19,10 +19,10 @@
 #' cells$ImageNumber <- rep(1:2,c(n/2,n/2))
 #' cells$x <- runif(n)
 #' cells$y <- runif(n)
-#' cells$AreaShape_round <- rexp(10)
-#' cells$AreaShape_diameter <- rexp(10, 2)
-#' cells$Intensity_Mean_CD8 <- rexp(10, 10)
-#' cells$Intensity_Mean_CD4 <- rexp(10, 10)
+#' cells$AreaShape_round <- rexp(n)
+#' cells$AreaShape_diameter <- rexp(n, 2)
+#' cells$Intensity_Mean_CD8 <- rexp(n, 10)
+#' cells$Intensity_Mean_CD4 <- rexp(n, 10)
 #'
 #' cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
 #' 
@@ -37,11 +37,56 @@
 #' @importFrom methods new
 #' @importClassesFrom S4Vectors DataFrame
 SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoords = c("x", 
-    "y"), cellTypeString = NULL, intensityString = NULL, morphologyString = NULL) {
+    "y"), cellTypeString = NULL, intensityString = NULL, morphologyString = NULL, 
+    cellIDString = NULL, imageCellIDString = NULL, imageIDString = NULL) {
+    
+    if (!is.null(cellIDString)) {
+        if (!cellIDString %in% colnames(cellData)) 
+            stop("cellIDString is not a column name of cellData")
+        cellData$cellID <- cellData[, cellIDString]
+    }
+    
+    if (!is.null(imageIDString)) {
+        if (!imageIDString %in% colnames(cellData)) 
+            stop("imageIDString is not a column name of cellData")
+        cellData$imageCellID <- cellData[, imageIDString]
+    }
+    
+    if (!is.null(imageIDString)) {
+        if (!imageIDString %in% colnames(cellData)) 
+            stop("imageIDString is not a column name of cellData")
+        
+        cellData$imageID <- cellData[, imageIDString]
+    }
+    
+    if (!is.null(cellTypeString)) {
+        if (!cellTypeString %in% colnames(cellData)) 
+            stop("cellTypeString is not a column name of cellData")
+        
+        cellData$cellType <- cellData[, cellTypeString]
+    }
+    
+    if (!is.null(intensityString)) {
+        if (length(intensityString) > 1) 
+            stop("intensityString needs to be NULL or length 1")
+        if (length(grep(intensityString, colnames(cellData))) == 0) 
+            stop("intensityString is not in column names of cellData")
+        
+    }
+    if (!is.null(morphologyString)) {
+        if (length(morphologyString) > 1) 
+            stop("morphologyString needs to be NULL or length 1")
+        if (length(grep(morphologyString, colnames(cellData))) == 0) 
+            stop("morphologyString is not in column names of cellData")
+    }
+    
+    
+    
     
     if (!cellProfiler) {
         
         if (is.null(cellData$cellID)) {
+            cat("There is no cellID. I'll create these", "\n")
             cellData$cellID <- paste("cell", seq_len(nrow(cellData)), sep = "_")
         }
         
@@ -55,15 +100,19 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
         }
         
         if (is.null(cellData$imageCellID)) {
+            cat("There is no image specific imageCellID. I'll create these", "\n")
             cellData$imageCellID <- paste("cell", seq_len(nrow(cellData)), sep = "_")
         }
         if (length(cellData$imageCellID) != nrow(cellData)) 
             stop("The number of rows in cells does not equal the number of imageCellIDs")
         
         if (is.null(cellData$imageID)) {
-            cat("There is no imageID. I'll assume this is only one image and create an arbitrary imageID")
+            cat("There is no imageID. I'll assume this is only one image and create an arbitrary imageID", 
+                "\n")
             cellData$imageID <- "image1"
         }
+        cellData$imageID <- as.factor(cellData$imageID)
+        cellData$cellID <- as.character(cellData$cellID)
     }
     
     
@@ -89,13 +138,12 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
     
     if (!is.null(cellTypeString)) {
         cellData$cellType <- cellData[, cellTypeString]
-        location <- split(DataFrame(cellData[, c("imageCellID", "cellID", "imageID", 
-            spatialCoords, "cellType")]), cellData$imageID)
+        location <- S4Vectors::split(DataFrame(cellData[, c("imageCellID", "cellID", 
+            "imageID", spatialCoords, "cellType")]), cellData$imageID)
     } else {
         cellData$cellType <- NA
         location <- S4Vectors::split(DataFrame(cellData[, c("imageCellID", "cellID", 
             "imageID", spatialCoords, "cellType")]), cellData$imageID)
-        cat(unlist(lapply(location, dim)))
     }
     
     df$location <- location
