@@ -1,13 +1,5 @@
-#' @export
-#' @rdname SegmentedCellExperiment
-#' @importClassesFrom S4Vectors DataFrame
-setClass("SegmentedCellExperiment",
-         contains = "DFrame",
-)
 
-
-
-SegmentedCellExperiment <- function(cellData = NULL, cellProfiler = FALSE, intensityString = NULL, morphologyString = NULL) {
+SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoords = c('x','y'), cellTypeString = NULL, intensityString = NULL, morphologyString = NULL) {
 
   if(!cellProfiler){
 
@@ -15,9 +7,6 @@ SegmentedCellExperiment <- function(cellData = NULL, cellProfiler = FALSE, inten
            cellData$cellID <- paste("cell", seq_len(nrow(cellData)), sep = "_")
        }
 
-      if (is.null(cellData$cellType)) {
-        stop("You need to include a 'cellType' column in the data.frame")
-      }
 
     if (is.null(cellData$x)) {
       stop("You need to include a 'x' column in the data.frame")
@@ -27,202 +16,213 @@ SegmentedCellExperiment <- function(cellData = NULL, cellProfiler = FALSE, inten
       stop("You need to include a 'y' column in the data.frame")
     }
 
-      if(is.null(cellData$uniqueCellID)){
-        cellData$uniqueCellID <- paste("cell", seq_len(nrow(cellData)), sep = "_")
+      if(is.null(cellData$imageCellID)){
+        cellData$imageCellID <- paste("cell", seq_len(nrow(cellData)), sep = "_")
       }
-       if (length(cellData$uniqueCellID) != nrow(cellData) )
-           stop("The number of rows in cells does not equal the number of uniqueCellIDs")
+       if (length(cellData$imageCellID) != nrow(cellData) )
+           stop("The number of rows in cells does not equal the number of imageCellIDs")
 
      if (is.null(cellData$imageID)) {
        cat("There is no imageID. I'll assume this is only one image and create an arbitrary imageID")
-       df$imageID <- "image1"
+       cellData$imageID <- "image1"
      }
-
-    location <- cellData[,c('uniqueCellID','cellID','imageID','x','y', 'cellType')]
-
   }
 
 
   if(cellProfiler){
 
+      cellData$imageID <- as.factor(cellData$ImageNumber)
+      cellData$cellID <- cellData$ObjectNumber
+      cellData$imageCellID <- cellData$ObjectNumber
+
+      if(is.null(intensityString)&any(grepl('Intensity_Mean_', colnames(cellData)))){
+        intensityString <- 'Intensity_Mean_'
+      }
+
+      if(is.null(morphologyString)&any(grepl('AreaShape_', colnames(cellData)))){
+        morphologyString <- 'AreaShape_'
+      }
 
   }
 
 
 
+  df = DataFrame(row.names = unique(cellData$imageID))
 
+  if(!is.null(cellTypeString)){
+    cellData$cellType <- cellData[,cellTypeString]
+    location <- split(DataFrame(cellData[,c('imageCellID','cellID','imageID',spatialCoords,'cellType')]), cellData$imageID)
+  }else{
+    cellData$cellType = NA
+    location <- S4Vectors::split(DataFrame(cellData[,c('imageCellID','cellID','imageID',spatialCoords, 'cellType')]), cellData$imageID)
+    cat(unlist(lapply(location,dim)))
+    }
+  
+  df$location <- location
 
+  df$intensity = S4Vectors::split(DataFrame(), cellData$imageID)
+  df$morphology = S4Vectors::split(DataFrame(), cellData$imageID)
+
+  if(!is.null(intensityString)){
+    intensity <- cellData[,grep(intensityString, colnames(cellData))]
+    colnames(intensity) <- gsub(intensityString, '', colnames(intensity))
+    df$intensity = S4Vectors::split(DataFrame(intensity), cellData$imageID)
   }
 
-  location <- split(DataFrame(x[,c('cellID','cellType','x','y')]), x$imageID)
+  if(!is.null(morphologyString)){
+    morphology <- cellData[,grep(morphologyString, colnames(cellData))]
+    colnames(morphology) <- gsub(morphologyString, '', morphology)
+    df$morphology = S4Vectors::split(DataFrame(morphology), cellData$imageID)
+  }
 
+  df$phenotype = S4Vectors::split(DataFrame(), cellData$imageID)
+  df$images = S4Vectors::split(DataFrame(), cellData$imageID)
+  df$masks = S4Vectors::split(DataFrame(), cellData$imageID)
 
-
-  df <- as(df,"DataFrame")
   df <- new("SegmentedCellExperiment", df)
-  sce
+  df
 }
-
-x <- new("SegmentedCellExperiment", row.names = c(1:10))
-
-
-
-
-
-
-
-
-
-
-
-### Convert something into a ImagingCytometryExperiment
-
-as.SegmentedCellExperiment <- function(x){
-  if(any(grepl('Intensity_mean',colnames(cells)))){
-    df = DataFrame(row.names = unique(x$imageID))
-    location <- split(DataFrame(x[,c('cellID','cellType','x','y')]), x$imageID)
-    df$location <- location
-    intensity <- x[,grep('Intensity_mean',colnames(x))]
-    colnames(intensity) <- gsub('Intensity_mean_', '', intensity)
-    df$intensity = split(DataFrame(intensity), x$imageID)
-    morphology <- x[,grep('Area',colnames(x))]
-    colnames(morphology) <- gsub('Area_', '', morphology)
-    df$morphology = split(DataFrame(morphology), x$imageID)
-    df$phenotype = split(DataFrame(), x$imageID)
-    df$images = split(DataFrame(), x$imageID)
-    df$masks = split(DataFrame(), x$imageID)
-    return(df)
-  }
-}
-
-
-### Some functions to get and make location data
-
-location <- function(x, image = NULL, bind = FALSE){
-  if(!is.null(image)){
-    x = x[image,]
-  }
-  if(bind==FALSE){
-    return(x$location)
-  }
-  if(bind==TRUE){
-    return(do.call('rbind',x$location))
-  }
-}
-
-
-'location<-' <- function(x, value){
-  if(nrow(value)==nrow(x)){
-    x$location <- value
-    return(x)
-  }
-
-  if(nrow(value)==length(imageID(x))){
-    x$location <- split(value,rep(rownames(x),unlist(lapply(x$location,nrow))))
-    return(x)
-  }
-
-}
-
-
-### Get imageIDs for each cell, not sure if this should also report rownames(df)
-
-imageID <- function(x, image = NULL){
-  if(!is.null(image)){
-    x = x[image,]
-  }
-  rep(rownames(x),unlist(lapply(x$location,nrow)))
-}
-
-### Get cellTypes for each cell
-
-cellType <- function(x, image = NULL){
-  if(!is.null(image)){
-    x = x[image,]
-  }
-  do.call('rbind',x$location)$cellType
-}
-
-'cellType<-' <- function(x, value){
-
-  loc <- location(x, bind = TRUE)
-
-  if(nrow(loc)!=nrow(x)){
-    stop('There is not enough or too many cell types')
-  }
-
-  loc$cellType <- value
-
-  location(x) <- loc
-
-}
-
-
-### Get cellID
-
-cellID <- function(x, image = NULL){
-  if(!is.null(image)){
-    x = x[image,]
-  }
-  do.call('rbind',x$location)$cellID
-}
-
-
-'cellID<-' <- function(x, value){
-
-  loc <- location(x, bind = TRUE)
-
-  if(nrow(loc)!=nrow(x)){
-    stop('There is not enough or too many cellIDs')
-  }
-
-  loc$cellID <- value
-
-  location(x) <- loc
-
-}
-
-
-
-### Get uniqueCellID
-
-uniqueCellID <- function(x, image = NULL){
-  if(!is.null(image)){
-    x = x[image,]
-  }
-  do.call('rbind',x$location)$uniqueCellID
-}
-
-
-makeUniqueCellID <- function(x){
-  loc <- location(x,bind=TRUE)
-  loc$uniqueCellID <- paste('cell', seq_len(nrow(loc)),sep = '')
-  location(x) <- loc
-  x
-}
-
-
-
-
-#### I can access and add phenotype data to the object
-
-phenotype <- function(x, image = NULL, bind = FALSE){
-  if(!is.null(image)){
-    x = x[image,]
-  }
-  do.call('rbind',x$phenotype)
-}
-
-
-
-'phenotype<-' <- function(x, value, image = NULL){
-  if(is.null(image)) image <- rownames(x)
-  use <- intersect(value$imageID,image)
-  x <- x[image,]
-  x$phenotype <- split(value,image)
-  x
-}
-
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# ### Some functions to get and make location data
+# 
+# location <- function(x, image = NULL, bind = FALSE){
+#   if(!is.null(image)){
+#     x = x[image,]
+#   }
+#   if(bind==FALSE){
+#     return(x$location)
+#   }
+#   if(bind==TRUE){
+#     return(do.call('rbind',x$location))
+#   }
+# }
+# 
+# 
+# 'location<-' <- function(x, value){
+#   if(nrow(value)==nrow(x)){
+#     x$location <- value
+#     return(x)
+#   }
+# 
+#   if(nrow(value)==length(imageID(x))){
+#     x$location <- split(value,rep(rownames(x),unlist(lapply(x$location,nrow))))
+#     return(x)
+#   }
+# 
+# }
+# 
+# 
+# ### Get imageIDs for each cell, not sure if this should also report rownames(df)
+# 
+# imageID <- function(x, image = NULL){
+#   if(!is.null(image)){
+#     x = x[image,]
+#   }
+#   rep(rownames(x),unlist(lapply(x$location,nrow)))
+# }
+# 
+# ### Get cellTypes for each cell
+# 
+# cellType <- function(x, image = NULL){
+#   if(!is.null(image)){
+#     x = x[image,]
+#   }
+#   do.call('rbind',x$location)$cellType
+# }
+# 
+# 'cellType<-' <- function(x, value){
+# 
+#   loc <- location(x, bind = TRUE)
+# 
+#   if(nrow(loc)!=nrow(x)){
+#     stop('There is not enough or too many cell types')
+#   }
+# 
+#   loc$cellType <- value
+# 
+#   location(x) <- loc
+# 
+# }
+# 
+# 
+# ### Get cellID
+# 
+# cellID <- function(x, image = NULL){
+#   if(!is.null(image)){
+#     x = x[image,]
+#   }
+#   do.call('rbind',x$location)$cellID
+# }
+# 
+# 
+# 'cellID<-' <- function(x, value){
+# 
+#   loc <- location(x, bind = TRUE)
+# 
+#   if(nrow(loc)!=nrow(x)){
+#     stop('There is not enough or too many cellIDs')
+#   }
+# 
+#   loc$cellID <- value
+# 
+#   location(x) <- loc
+# 
+# }
+# 
+# 
+# 
+# ### Get uniqueCellID
+# 
+# uniqueCellID <- function(x, image = NULL){
+#   if(!is.null(image)){
+#     x = x[image,]
+#   }
+#   do.call('rbind',x$location)$uniqueCellID
+# }
+# 
+# 
+# makeUniqueCellID <- function(x){
+#   loc <- location(x,bind=TRUE)
+#   loc$uniqueCellID <- paste('cell', seq_len(nrow(loc)),sep = '')
+#   location(x) <- loc
+#   x
+# }
+# 
+# 
+# 
+# 
+# #### I can access and add phenotype data to the object
+# 
+# phenotype <- function(x, image = NULL, bind = FALSE){
+#   if(!is.null(image)){
+#     x = x[image,]
+#   }
+#   do.call('rbind',x$phenotype)
+# }
+# 
+# 
+# 
+# 'phenotype<-' <- function(x, value, image = NULL){
+#   if(is.null(image)) image <- rownames(x)
+#   use <- intersect(value$imageID,image)
+#   x <- x[image,]
+#   x$phenotype <- split(value,image)
+#   x
+# }
+# 
 
 
 
@@ -233,22 +233,22 @@ phenotype <- function(x, image = NULL, bind = FALSE){
 #
 ### Something that resembles cellProfiler data
 
-cells <- data.frame(row.names = 1:10)
-cells$cellID <- paste('cell',1:10,sep = '')
-cells$imageID <- paste('image',rep(1:2,c(4,6)),sep = '')
-cells$x <- 1:10
-cells$y <- 10:1
-cells$cellType <- paste('cellType',rep(1:2,5),sep = '')
-cells$Area_round <- 1
-cells$Area_diameter <- 2
-cells$Intensity_mean_CD8 <- 3
-cells$Intensity_mean_CD4 <- 11:20
+# cells <- data.frame(row.names = 1:10)
+# cells$cellID <- paste('cell',1:10,sep = '')
+# cells$imageID <- paste('image',rep(1:2,c(4,6)),sep = '')
+# cells$x <- 1:10
+# cells$y <- 10:1
+# cells$cellType <- paste('cellType',rep(1:2,5),sep = '')
+# cells$Area_round <- 1
+# cells$Area_diameter <- 2
+# cells$Intensity_mean_CD8 <- 3
+# cells$Intensity_mean_CD4 <- 11:20
 
 
 
 ### Lets make a CellImagingExperiment... obviously we can make this a class
 
-df <- as.ImagingCytometryExperiment(cells)
+# df <- as.ImagingCytometryExperiment(cells)
 #
 #
 #

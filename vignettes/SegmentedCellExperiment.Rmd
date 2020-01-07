@@ -1,0 +1,68 @@
+---
+title: "SegmentedCellExperiment"
+author: "Ellis Patrick"
+date: "02/01/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Simple example
+
+```{r}
+
+library(SegmentedCellExperiment)
+### Something that resembles cellProfiler data
+
+set.seed(51773)
+
+n = 10
+
+cells <- data.frame(row.names = seq_len(n))
+cells$ObjectNumber <- seq_len(n)
+cells$ImageNumber <- rep(1:2,c(n/2,n/2))
+cells$x <- runif(n)
+cells$y <- runif(n)
+cells$AreaShape_round <- rexp(10)
+cells$AreaShape_diameter <- rexp(10, 2)
+cells$Intensity_Mean_CD8 <- rexp(10, 10)
+cells$Intensity_Mean_CD4 <- rexp(10, 10)
+
+
+cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
+
+
+```
+
+```{r}
+### Get locaation information
+
+loc <- location(cellExp)
+head(loc)
+
+location(cellExp) <- loc
+
+```
+
+
+
+```{r}
+### Cluster cell types
+
+intensities <- intensity(cellExp)
+kM <- kmeans(intensities,2)
+
+cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
+
+location(cellExp)
+
+
+```
+
+
+
+
