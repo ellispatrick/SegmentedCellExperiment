@@ -55,9 +55,7 @@ location(cellExp) <- loc
 
 intensities <- intensity(cellExp)
 kM <- kmeans(intensities,2)
-
 cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
-
 location(cellExp)
 
 
