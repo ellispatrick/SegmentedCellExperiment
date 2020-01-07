@@ -12,3 +12,4 @@ VignetteBuilder: knitr
 Depends: S4Vectors, BiocGenerics
 Imports: methods
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.2

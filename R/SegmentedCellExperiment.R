@@ -36,7 +36,6 @@
 #' @rdname SegmentedCellExperiment
 #' @importFrom methods new
 #' @importClassesFrom S4Vectors DataFrame
-
 SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoords = c('x','y'), cellTypeString = NULL, intensityString = NULL, morphologyString = NULL) {
 
   if(!cellProfiler){

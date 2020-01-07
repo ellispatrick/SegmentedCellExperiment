@@ -1,3 +1,4 @@
+#' @export
 setGeneric("location", function(x, image = NULL, bind = FALSE) standardGeneric("location"))
 setMethod("location", "SegmentedCellExperiment", function(x, image = NULL, bind = TRUE){
   if(!is.null(image)){
@@ -13,6 +14,7 @@ setMethod("location", "SegmentedCellExperiment", function(x, image = NULL, bind 
   
   })
 
+#' @export
 setGeneric("location<-", function(x, value, image = NULL) standardGeneric("location<-"))
 setMethod("location<-", "SegmentedCellExperiment", function(x, value, image = NULL) {
   if(is.null(image))image = rownames(x)
@@ -31,6 +33,7 @@ setMethod("location<-", "SegmentedCellExperiment", function(x, value, image = NU
 
 ### Get imageIDs for each cell, not sure if this should also report rownames(df)
 
+#' @export
 setGeneric("imageID", function(x, image = NULL) standardGeneric("imageID"))
 setMethod("imageID", "SegmentedCellExperiment", function(x, image = NULL){
   if(!is.null(image)){
@@ -44,7 +47,7 @@ setMethod("imageID", "SegmentedCellExperiment", function(x, image = NULL){
 
 ### Get cellID
 
-
+#' @export
 setGeneric("cellID", function(x, image = NULL) standardGeneric("cellID"))
 setMethod("cellID", "SegmentedCellExperiment", function(x, image = NULL){
   if(!is.null(image)){
@@ -53,8 +56,8 @@ setMethod("cellID", "SegmentedCellExperiment", function(x, image = NULL){
   BiocGenerics::do.call('rbind',x$location)$cellID
 })
 
+#' @export
 setGeneric("cellID<-", function(x, value) standardGeneric("cellID<-"))
-
 setMethod("cellID<-", "SegmentedCellExperiment", function(x, value) {
   loc <- location(x)
   
@@ -69,7 +72,7 @@ setMethod("cellID<-", "SegmentedCellExperiment", function(x, value) {
 
 ### Get imageCellID
 
-
+#' @export
 setGeneric("imageCellID", function(x, image = NULL) standardGeneric("imageCellID"))
 setMethod("imageCellID", "SegmentedCellExperiment", function(x, image = NULL){
   if(!is.null(image)){
@@ -78,8 +81,8 @@ setMethod("imageCellID", "SegmentedCellExperiment", function(x, image = NULL){
   BiocGenerics::do.call('rbind',x$location)$imageCellID
 })
 
+#' @export
 setGeneric("imageCellID<-", function(x, value) standardGeneric("imageCellID<-"))
-
 setMethod("imageCellID<-", "SegmentedCellExperiment", function(x, value) {
   loc <- location(x)
   
@@ -98,6 +101,7 @@ setMethod("imageCellID<-", "SegmentedCellExperiment", function(x, value) {
 
 #### Access and add phenotype data to the object
 
+#' @export
 setGeneric("phenotype", function(x, image = NULL, bind = TRUE) standardGeneric("phenotype"))
 setMethod("phenotype", "SegmentedCellExperiment", function(x, image = NULL, bind = TRUE){
   if(!is.null(image)){
@@ -106,6 +110,7 @@ setMethod("phenotype", "SegmentedCellExperiment", function(x, image = NULL, bind
   BiocGenerics::do.call('rbind',x$phenotype)
 })
 
+#' @export
 setGeneric("phenotype<-", function(x, value, image = NULL) standardGeneric("phenotype<-"))
 setMethod("phenotype<-", "SegmentedCellExperiment", function(x, value, image = NULL) {
   if(is.null(image)) image <- rownames(x)
@@ -116,7 +121,7 @@ setMethod("phenotype<-", "SegmentedCellExperiment", function(x, value, image = N
 
 
 
-
+#' @export
 setGeneric("intensity", function(x, image = NULL, bind = FALSE) standardGeneric("intensity"))
 setMethod("intensity", "SegmentedCellExperiment", function(x, image = NULL, bind = TRUE){
   if(!is.null(image)){
@@ -132,6 +137,7 @@ setMethod("intensity", "SegmentedCellExperiment", function(x, image = NULL, bind
   
 })
 
+#' @export
 setGeneric("intensity<-", function(x, value, image = NULL) standardGeneric("intensity<-"))
 setMethod("intensity<-", "SegmentedCellExperiment", function(x, value, image = NULL) {
   if(is.null(image))image = rownames(x)
@@ -151,7 +157,7 @@ setMethod("intensity<-", "SegmentedCellExperiment", function(x, value, image = N
 
 ### Get imageCellID
 
-
+#' @export
 setGeneric("cellType", function(x, image = NULL) standardGeneric("cellType"))
 setMethod("cellType", "SegmentedCellExperiment", function(x, image = NULL){
   if(!is.null(image)){
@@ -160,8 +166,8 @@ setMethod("cellType", "SegmentedCellExperiment", function(x, image = NULL){
   BiocGenerics::do.call('rbind',x$location)$cellType
 })
 
+#' @export
 setGeneric("cellType<-", function(x, value, image=NULL) standardGeneric("cellType<-"))
-
 setMethod("cellType<-", "SegmentedCellExperiment", function(x, value, image=NULL) {
   if(is.null(image))image = rownames(x)
   loc <- location(x,image = image)
