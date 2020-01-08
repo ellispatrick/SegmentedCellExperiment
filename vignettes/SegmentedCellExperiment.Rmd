@@ -128,6 +128,17 @@ head(morph)
 ```
 
 
+### Phenotype information
+
+We can also include phenotype information for each image. Create some corresponding toy phenotype information which must have a `imageID` variable. 
+
+```{r}
+phenoData <- DataFrame(imageID = c('1','2'), age = c(21,81), status = c('dead','alive'))
+phenotype(cellExp) <- phenoData
+phenotype(cellExp)
+phenotype(cellExp, expand = TRUE)
+```
+
 
 
 ## Example 3 - Minimal example, cells only have spatial coordinates

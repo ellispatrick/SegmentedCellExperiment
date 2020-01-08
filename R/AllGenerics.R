@@ -107,30 +107,6 @@ setMethod("imageCellID<-", "SegmentedCellExperiment", function(x, value) {
 
 
 
-### Get and add phenotype data to the object
-
-#' @export
-setGeneric("phenotype", function(x, image = NULL, bind = TRUE) standardGeneric("phenotype"))
-setMethod("phenotype", "SegmentedCellExperiment", function(x, image = NULL, bind = TRUE) {
-    if (!is.null(image)) {
-        x <- x[image, ]
-    }
-    BiocGenerics::do.call("rbind", x$phenotype)
-})
-
-#' @export
-setGeneric("phenotype<-", function(x, value, image = NULL) standardGeneric("phenotype<-"))
-setMethod("phenotype<-", "SegmentedCellExperiment", function(x, value, image = NULL) {
-    if (is.null(image)) 
-        image <- rownames(x)
-    use <- intersect(value$imageID, image)
-    x[image, ]@listData$phenotype <- split(value, image)
-    x
-})
-
-
-
-
 ### Get intensity information
 
 #' @export
@@ -233,6 +209,36 @@ setMethod("cellType<-", "SegmentedCellExperiment", function(x, value, image = NU
     
     location(x, image = image) <- loc
     x
+})
+
+
+
+
+
+### Get and add phenotype data to the object
+
+#' @export
+setGeneric("phenotype", function(x, image = NULL, bind = TRUE, expand = FALSE) standardGeneric("phenotype"))
+setMethod("phenotype", "SegmentedCellExperiment", function(x, image = NULL, bind = TRUE, expand = FALSE) {
+  if (!is.null(image)) {
+    x <- x[image, ]
+  }
+  if(expand){
+    return(BiocGenerics::do.call("rbind", x$phenotype)[imageID(x),])
+  }else{
+  return(BiocGenerics::do.call("rbind", x$phenotype))
+  }
+})
+
+#' @export
+setGeneric("phenotype<-", function(x, value, image = NULL) standardGeneric("phenotype<-"))
+setMethod("phenotype<-", "SegmentedCellExperiment", function(x, value, image = NULL) {
+  if (is.null(image)) 
+    image <- rownames(x)
+  use <- intersect(value$imageID, image)
+  rownames(value) <- value$imageID
+  x[use, ]@listData$phenotype <- S4Vectors::split(value[use,], use)
+  x
 })
 
 
