@@ -224,9 +224,11 @@ setMethod("phenotype", "SegmentedCellExperiment", function(x, image = NULL, bind
     x <- x[image, ]
   }
   if(expand){
-    return(BiocGenerics::do.call("rbind", x$phenotype)[imageID(x),])
+    ph <- BiocGenerics::do.call("rbind", x$phenotype)
+    rownames(ph) <- ph$imageID
+    return(ph[imageID(x),])
   }else{
-  return(BiocGenerics::do.call("rbind", x$phenotype))
+    return(BiocGenerics::do.call("rbind", x$phenotype))
   }
 })
 
