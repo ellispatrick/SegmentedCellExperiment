@@ -9,7 +9,7 @@
 SegmentedCellExperiment(
   cellData,
   cellProfiler = FALSE,
-  spatialCoords = c("x", "y"),
+  spatialCoords = NULL,
   cellTypeString = NULL,
   intensityString = NULL,
   morphologyString = NULL,

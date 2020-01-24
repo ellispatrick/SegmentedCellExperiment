@@ -19,8 +19,8 @@ n = 10
 cells <- data.frame(row.names = seq_len(n))
 cells$ObjectNumber <- seq_len(n)
 cells$ImageNumber <- rep(1:2,c(n/2,n/2))
-cells$x <- runif(n)
-cells$y <- runif(n)
+cells$AreaShape_Center_X <- runif(n)
+cells$AreaShape_Center_Y <- runif(n)
 cells$AreaShape_round <- rexp(n)
 cells$AreaShape_diameter <- rexp(n, 2)
 cells$Intensity_Mean_CD8 <- rexp(n, 10)
@@ -44,6 +44,24 @@ cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
 
 loc <- location(cellExp)
 head(loc)
+
+## -----------------------------------------------------------------------------
+isletFile <- system.file("extdata","isletCells.csv", package = "SegmentedCellExperiment")
+cells <- read.csv(isletFile)
+
+colnames(cells)
+
+
+## -----------------------------------------------------------------------------
+intensities <- intensity(cellExp)
+kM <- kmeans(intensities,2)
+cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
+
+loc <- location(cellExp)
+head(loc)
+
+## -----------------------------------------------------------------------------
+cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
 
 ## -----------------------------------------------------------------------------
 set.seed(51773)

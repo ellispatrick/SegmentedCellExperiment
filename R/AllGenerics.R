@@ -27,7 +27,7 @@ setMethod("location<-", "SegmentedCellExperiment", function(x, value, image = NU
         return(x)
     }
     
-    if (nrow(value) == length(imageID(x))) {
+    if (nrow(value) == length(imageID(x,image))) {
         value <- value[, c("cellID", "imageCellID", "x", "y", "cellType")]
         x[image, ]@listData$location <- S4Vectors::split(value, rep(image, unlist(lapply(x[image, 
             "location"], nrow))))
@@ -173,7 +173,7 @@ setMethod("morphology<-", "SegmentedCellExperiment", function(x, value, image = 
         return(x)
     }
     
-    if (nrow(value) == length(imageID(x))) {
+    if (nrow(value) == length(imageID(x,image))) {
         x[image, ]@listData$morphology <- S4Vectors::split(value, rep(rownames(x), 
             unlist(lapply(x$morphology, nrow))))
         return(x)
