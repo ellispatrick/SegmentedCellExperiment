@@ -209,3 +209,5 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
     df <- new("SegmentedCellExperiment", df)
     df
 }
+
+

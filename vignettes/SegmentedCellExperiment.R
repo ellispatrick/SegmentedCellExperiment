@@ -49,19 +49,23 @@ head(loc)
 isletFile <- system.file("extdata","isletCells.csv", package = "SegmentedCellExperiment")
 cells <- read.csv(isletFile)
 
-colnames(cells)
+head(colnames(cells))
 
 
 ## -----------------------------------------------------------------------------
+cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
+
+## -----------------------------------------------------------------------------
 intensities <- intensity(cellExp)
-kM <- kmeans(intensities,2)
+kM <- kmeans(intensities,4)
 cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
 
 loc <- location(cellExp)
 head(loc)
 
-## -----------------------------------------------------------------------------
-cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
+## ---- fig.width=5, fig.height= 5----------------------------------------------
+
+plot(cellExp, imageID=1)
 
 ## -----------------------------------------------------------------------------
 set.seed(51773)
