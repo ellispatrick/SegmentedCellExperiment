@@ -27,6 +27,7 @@ First, load the package.
 
 ```{r setup, message=FALSE}
 library(SegmentedCellExperiment)
+library(S4Vectors)
 ```
 
 
@@ -120,8 +121,7 @@ head(loc)
 
 Here is a very simple plot in ggplot showing the spatial distribution of the cell types
 
-```{r, fig.width=5, fig.height= 5}
-
+```{r, fig.width=5, fig.height= 6}
 plot(cellExp, imageID=1)
 ```
 

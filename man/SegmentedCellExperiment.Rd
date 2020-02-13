@@ -4,6 +4,7 @@
 \name{SegmentedCellExperiment-class}
 \alias{SegmentedCellExperiment-class}
 \alias{SegmentedCellExperiment}
+\alias{SegmentedCellExperiment,SegmentedCellExperiment-method}
 \title{The SegmentedCellExperiment class}
 \usage{
 SegmentedCellExperiment(
@@ -30,6 +31,15 @@ SegmentedCellExperiment(
 \item{intensityString}{A string which can be used to identify the columns which contain marker intensities. (This needs to be extended to take the column names themselves.)}
 
 \item{morphologyString}{A string which can be used to identify the columns which contains morphology information.}
+
+\item{cellIDString}{The column name for cellID.}
+
+\item{imageCellIDString}{The column name for imageCellID.}
+
+\item{imageIDString}{The column name for imageIDString}
+}
+\value{
+A SegmentedCellExperiment object
 }
 \description{
 The SegmentedCellExperiment class
@@ -44,8 +54,8 @@ n = 10
 cells <- data.frame(row.names = seq_len(n))
 cells$ObjectNumber <- seq_len(n)
 cells$ImageNumber <- rep(1:2,c(n/2,n/2))
-cells$x <- runif(n)
-cells$y <- runif(n)
+cells$AreaShape_Center_X <- runif(n)
+cells$AreaShape_Center_Y <- runif(n)
 cells$AreaShape_round <- rexp(n)
 cells$AreaShape_diameter <- rexp(n, 2)
 cells$Intensity_Mean_CD8 <- rexp(n, 10)

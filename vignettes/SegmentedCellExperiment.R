@@ -7,6 +7,7 @@ library(BiocStyle)
 
 ## ----setup, message=FALSE-----------------------------------------------------
 library(SegmentedCellExperiment)
+library(S4Vectors)
 
 ## -----------------------------------------------------------------------------
 
@@ -62,8 +63,7 @@ cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
 loc <- location(cellExp)
 head(loc)
 
-## ---- fig.width=5, fig.height= 5----------------------------------------------
-
+## ---- fig.width=5, fig.height= 6----------------------------------------------
 plot(cellExp, imageID=1)
 
 ## -----------------------------------------------------------------------------
