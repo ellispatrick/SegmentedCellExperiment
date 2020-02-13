@@ -32,7 +32,7 @@ setMethod("location<-", "SegmentedCellExperiment", function(x, value, imageID = 
         by <- rep(imageID, unlist(lapply(x[imageID, "location"], nrow)))
         by <- factor(by, levels = unique(by))
         x[imageID, ]@listData$location <- S4Vectors::split(value, by )
-        return(x[uni,])
+        return(x)
     }
 })
 

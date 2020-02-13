@@ -36,7 +36,6 @@ head(loc)
 
 location(cellExp) <- loc
 
-
 ## -----------------------------------------------------------------------------
 intensities <- intensity(cellExp)
 kM <- kmeans(intensities,2)
@@ -102,8 +101,6 @@ phenotype(cellExp)
 phenotype(cellExp, expand = TRUE)
 
 ## -----------------------------------------------------------------------------
-
-
 set.seed(51773)
 
 n = 10
@@ -112,7 +109,6 @@ cells <- data.frame(row.names = seq_len(n))
 cells$x <- runif(n)
 cells$y <- runif(n)
 cellExp <- SegmentedCellExperiment(cells)
-
 
 
 ## -----------------------------------------------------------------------------

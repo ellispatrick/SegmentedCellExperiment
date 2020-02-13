@@ -476,19 +476,17 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="example-4---minimal-example-cells-only-have-spatial-coordinates" class="section level2">
 <h2>Example 4 - Minimal example, cells only have spatial coordinates</h2>
 <p>Here we generate data where we only know the location of each cell.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a></span>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">set.seed</span>(<span class="dv">51773</span>)</span>
 <span id="cb14-2"><a href="#cb14-2"></a></span>
-<span id="cb14-3"><a href="#cb14-3"></a><span class="kw">set.seed</span>(<span class="dv">51773</span>)</span>
+<span id="cb14-3"><a href="#cb14-3"></a>n =<span class="st"> </span><span class="dv">10</span></span>
 <span id="cb14-4"><a href="#cb14-4"></a></span>
-<span id="cb14-5"><a href="#cb14-5"></a>n =<span class="st"> </span><span class="dv">10</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a></span>
-<span id="cb14-7"><a href="#cb14-7"></a>cells &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">row.names =</span> <span class="kw">seq_len</span>(n))</span>
-<span id="cb14-8"><a href="#cb14-8"></a>cells<span class="op">$</span>x &lt;-<span class="st"> </span><span class="kw">runif</span>(n)</span>
-<span id="cb14-9"><a href="#cb14-9"></a>cells<span class="op">$</span>y &lt;-<span class="st"> </span><span class="kw">runif</span>(n)</span>
-<span id="cb14-10"><a href="#cb14-10"></a>cellExp &lt;-<span class="st"> </span><span class="kw">SegmentedCellExperiment</span>(cells)</span>
-<span id="cb14-11"><a href="#cb14-11"></a><span class="co">#&gt; There is no cellID. I&#39;ll create these </span></span>
-<span id="cb14-12"><a href="#cb14-12"></a><span class="co">#&gt; There is no image specific imageCellID. I&#39;ll create these </span></span>
-<span id="cb14-13"><a href="#cb14-13"></a><span class="co">#&gt; There is no imageID. I&#39;ll assume this is only one image and create an arbitrary imageID</span></span></code></pre></div>
+<span id="cb14-5"><a href="#cb14-5"></a>cells &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">row.names =</span> <span class="kw">seq_len</span>(n))</span>
+<span id="cb14-6"><a href="#cb14-6"></a>cells<span class="op">$</span>x &lt;-<span class="st"> </span><span class="kw">runif</span>(n)</span>
+<span id="cb14-7"><a href="#cb14-7"></a>cells<span class="op">$</span>y &lt;-<span class="st"> </span><span class="kw">runif</span>(n)</span>
+<span id="cb14-8"><a href="#cb14-8"></a>cellExp &lt;-<span class="st"> </span><span class="kw">SegmentedCellExperiment</span>(cells)</span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="co">#&gt; There is no cellID. I&#39;ll create these </span></span>
+<span id="cb14-10"><a href="#cb14-10"></a><span class="co">#&gt; There is no image specific imageCellID. I&#39;ll create these </span></span>
+<span id="cb14-11"><a href="#cb14-11"></a><span class="co">#&gt; There is no imageID. I&#39;ll assume this is only one image and create an arbitrary imageID</span></span></code></pre></div>
 <p>Extract the location information which now also has cellIDs and imageIDs.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>loc &lt;-<span class="st"> </span><span class="kw">location</span>(cellExp)</span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="kw">head</span>(loc)</span>
