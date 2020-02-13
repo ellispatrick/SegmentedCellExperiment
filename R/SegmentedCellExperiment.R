@@ -6,10 +6,15 @@
 #' @param cellTypeString The name of the column that contains cell type calls.
 #' @param intensityString A string which can be used to identify the columns which contain marker intensities. (This needs to be extended to take the column names themselves.)
 #' @param morphologyString A string which can be used to identify the columns which contains morphology information.
+#' @param cellIDString The column name for cellID.
+#' @param imageCellIDString The column name for imageCellID.
+#' @param imageIDString The column name for imageIDString
+#' 
+#' @return A SegmentedCellExperiment object
 #' 
 #' @examples
 #' ### Something that resembles cellProfiler data
-#'
+#' 
 #' set.seed(51773)
 #'
 #' n = 10
@@ -17,8 +22,8 @@
 #' cells <- data.frame(row.names = seq_len(n))
 #' cells$ObjectNumber <- seq_len(n)
 #' cells$ImageNumber <- rep(1:2,c(n/2,n/2))
-#' cells$x <- runif(n)
-#' cells$y <- runif(n)
+#' cells$AreaShape_Center_X <- runif(n)
+#' cells$AreaShape_Center_Y <- runif(n)
 #' cells$AreaShape_round <- rexp(n)
 #' cells$AreaShape_diameter <- rexp(n, 2)
 #' cells$Intensity_Mean_CD8 <- rexp(n, 10)
@@ -32,12 +37,17 @@
 #' cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
 #' location(cellExp)
 #' 
+#' @aliases 
+#' SegmentedCellExperiment
+#' SegmentedCellExperiment,SegmentedCellExperiment-method
+#' 
 #' @export
 #' @rdname SegmentedCellExperiment
 #' @importFrom methods new
-#' @importClassesFrom S4Vectors DataFrame
-SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoords = NULL, cellTypeString = NULL, intensityString = NULL, morphologyString = NULL, 
-    cellIDString = NULL, imageCellIDString = NULL, imageIDString = NULL) {
+#' @import S4Vectors
+SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoords = NULL, 
+    cellTypeString = NULL, intensityString = NULL, morphologyString = NULL, cellIDString = NULL, 
+    imageCellIDString = NULL, imageIDString = NULL) {
     
     ### Check variable names
     
@@ -100,7 +110,7 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
             cellData$y <- spatialCoords[2]
         }
         
-        spatialCoords <- c('x', 'y')
+        spatialCoords <- c("x", "y")
         
         if (is.null(cellData$x)) {
             stop("You need to include a 'x' column in the data.frame")
@@ -110,7 +120,7 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
             stop("You need to include a 'y' column in the data.frame")
         }
         
-       
+        
         if (is.null(cellData$imageCellID)) {
             cat("There is no image specific imageCellID. I'll create these", "\n")
             cellData$imageCellID <- paste("cell", seq_len(nrow(cellData)), sep = "_")
@@ -149,7 +159,7 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
             cellData$y <- cellData$AreaShape_Center_Y
         }
         
-        spatialCoords <- c('x', 'y')
+        spatialCoords <- c("x", "y")
         
         if (is.null(intensityString) & any(grepl("Intensity_Mean_", colnames(cellData)))) {
             intensityString <- "Intensity_Mean_"
@@ -169,7 +179,7 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
     if (!is.null(cellTypeString)) {
         cellData$cellType <- cellData[, cellTypeString]
         location <- S4Vectors::split(DataFrame(cellData[, c("cellID", "imageCellID", 
-                                                            spatialCoords, "cellType")]), cellData$imageID)
+            spatialCoords, "cellType")]), cellData$imageID)
     } else {
         cellData$cellType <- NA
         location <- S4Vectors::split(DataFrame(cellData[, c("cellID", "imageCellID", 
