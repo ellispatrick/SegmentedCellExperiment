@@ -1,8 +1,7 @@
 # SegmentedCellExperiment
 
 
-A `SegmentedCellExperiment` is a class designed to store data from imaging cytometry (FISH, IMC, CycIF, spatial transcriptomics, ... ) that has already been segmented. Ideally this type of data can be used for point process models or nearest neighbour analysis. At the least this means that we have the location of each cell, potentially a call of its cell type and maybe information on protein/gene marker intensities or morphology. 
-
+A `SegmentedCellExperiment` is an object designed to store data from imaging cytometry (FISH, IMC, CycIF, spatial transcriptomics, ... ) that has already been segmented and reduced to individual cells. A `SegmentedCellExperiment` extends DataFrame and defines methods that take advantage of DataFrame nesting to represent various elements of cell-based experiments with spatial orientation that are commonly encountered. This object is able to store information on a cell's spatial location, cellType, morphology, intensity of gene/protein marks as well as image level phenotype information. Ideally this type of data can be used for cell clustering, point process models or nearest neighbour analysis. 
 ## Installation
 
 You can install the released version of SegmentedCellExperiment from GitHub with:
@@ -39,6 +38,7 @@ We can then create a `SegmentedCellExperiment` object.
 ``` r
 
 cellExp <- SegmentedCellExperiment(cells, cellTypeString = 'cellType', intensityString = 'intensity_', morphologyString = 'shape_')
+cellExp
 
 ```
 
