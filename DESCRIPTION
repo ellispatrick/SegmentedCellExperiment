@@ -1,7 +1,7 @@
 Package: SegmentedCellExperiment
 Type: Package
 Title: S4 Class for segmented spatial 'omics data
-Version: 0.99.3
+Version: 0.99.4
 Author: Nicolas Canete and Ellis Patrick
 Maintainer: Ellis Patrick <ellis.patrick@sydney.edu.au>
 Description: This package describes an S4 class for storing data from segmented imaging cytometry and spatial omics data. This object is able to store information on a cell's spatial location, cellType, morphology, intensity of gene/protein marks as well as image level phenotype information. 
