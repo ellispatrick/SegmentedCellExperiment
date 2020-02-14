@@ -62,6 +62,7 @@ We can then create a `SegmentedCellExperiment` object.
 
 ```{r}
 cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
+cellExp
 ```
 
 Extract the location information and overwrite it as well.
@@ -102,6 +103,7 @@ We can then create a `SegmentedCellExperiment` object.
 
 ```{r}
 cellExp <- SegmentedCellExperiment(cells, cellProfiler = TRUE)
+cellExp
 ```
 
 
@@ -155,6 +157,7 @@ We can then create a `SegmentedCellExperiment` object.
 ```{r}
 
 cellExp <- SegmentedCellExperiment(cells, cellTypeString = 'cellType', intensityString = 'intensity_', morphologyString = 'shape_')
+cellExp
 
 ```
 
@@ -193,6 +196,7 @@ cells <- data.frame(row.names = seq_len(n))
 cells$x <- runif(n)
 cells$y <- runif(n)
 cellExp <- SegmentedCellExperiment(cells)
+cellExp
 
 ```
 

@@ -351,6 +351,7 @@ setMethod("phenotype", "SegmentedCellExperiment", function(x, imageID = NULL, bi
     }
 })
 
+
 #' @export
 setGeneric("phenotype<-", function(x, imageID = NULL, value) standardGeneric("phenotype<-"))
 setMethod("phenotype<-", "SegmentedCellExperiment", function(x, imageID = NULL, value) {
@@ -361,7 +362,5 @@ setMethod("phenotype<-", "SegmentedCellExperiment", function(x, imageID = NULL, 
     x[use, ]@listData$phenotype <- S4Vectors::split(value[use, ], use)
     x[unique(use), ]
 })
-
-
 
 

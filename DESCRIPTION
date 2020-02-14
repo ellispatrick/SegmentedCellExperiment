@@ -1,7 +1,7 @@
 Package: SegmentedCellExperiment
 Type: Package
 Title: S4 Class for segmented spatial 'omics data
-Version: 0.99.8
+Version: 0.99.9
 Author: Nicolas Canete and Ellis Patrick
 Maintainer: Ellis Patrick <ellis.patrick@sydney.edu.au>
 Description: This package describes an S4 class for storing data from segmented 

@@ -145,6 +145,10 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
         cellData$cellID <- cellData$ObjectNumber
         cellData$imageCellID <- cellData$ObjectNumber
         
+        if (is.null(spatialCoords)) {
+            spatialCoords <- c("AreaShape_Center_X", "AreaShape_Center_Y")
+        }
+        
         if (!is.null(spatialCoords)) {
             cellData$x <- spatialCoords[1]
         }
@@ -153,14 +157,7 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
             cellData$y <- spatialCoords[2]
         }
         
-        
-        if (is.null(spatialCoords)) {
-            cellData$x <- cellData$AreaShape_Center_X
-            cellData$y <- cellData$AreaShape_Center_Y
-        }
-        
-        spatialCoords <- c("x", "y")
-        
+
         if (is.null(intensityString) & any(grepl("Intensity_Mean_", colnames(cellData)))) {
             intensityString <- "Intensity_Mean_"
         }
@@ -168,6 +165,13 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
         if (is.null(morphologyString) & any(grepl("AreaShape_", colnames(cellData)))) {
             morphologyString <- "AreaShape_"
         }
+        
+        if (any(grepl(morphologyString,spatialCoords))) {
+            cn <- spatialCoords[grep(morphologyString,spatialCoords)]
+            cellData <- cellData[,!colnames(cellData)%in%cn]
+        }
+        
+        spatialCoords <- c("x", "y")
         
     }
     
