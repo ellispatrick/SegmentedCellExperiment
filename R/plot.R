@@ -31,28 +31,29 @@
 #' 
 #' plot(cellExp, imageID=1)
 #' 
-#' @name plot.SegmentedCellExperiment
 #' 
 #' @rdname plotSegmentedCellExperiment
-#' @importFrom ggplot2 ggplot aes geom_point theme_classic .data
-
-if (!isGeneric("plot")) setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
-
-setMethod("plot", signature(x = "SegmentedCellExperiment", y = "missing"), function(x, 
-    y, ...) {
-    plot.SegmentedCellExperiment(x, ...)
-})
-
+#' @importFrom ggplot2 ggplot aes geom_point theme_classic
 plot.SegmentedCellExperiment <- function(cellData, imageID = NULL) {
+
     if (is.null(imageID)) {
         imageID <- imageID(cellData)[1]
     }
     
     loc <- as.data.frame(location(cellData, imageID = imageID))
     if (is.na(loc$cellType[1])) {
-        ggplot(loc, aes(x = .data$x, y = .data$y)) + geom_point() + theme_classic()
+        ggplot(loc, aes(x = x, y = y)) + geom_point() + theme_classic()
     } else {
-        ggplot(loc, aes(x = .data$x, y = .data$y, colour = cellType)) + geom_point() + 
+        ggplot(loc, aes(x = x, y = y, colour = cellType)) + geom_point() + 
             theme_classic()
     }
 }
+
+
+if (!isGeneric("plot")) setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
+
+setMethod("plot", signature(x = "SegmentedCellExperiment", y = "missing"), function(x, 
+                                                                                    y, ...) {
+    plot.SegmentedCellExperiment(x, ...)
+})
+

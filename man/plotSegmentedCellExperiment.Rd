@@ -3,10 +3,13 @@
 \name{plot.SegmentedCellExperiment}
 \alias{plot.SegmentedCellExperiment}
 \title{A basic plot for SegmentedCellExperiment object}
+\usage{
+plot.SegmentedCellExperiment(cellData, imageID = NULL)
+}
 \arguments{
-\item{x}{A SegmentedCellExperiment object.}
-
 \item{imageID}{The image that should be plotted}
+
+\item{x}{A SegmentedCellExperiment object.}
 }
 \description{
 This function generates a basic plot of the location and cellType data.
@@ -36,5 +39,6 @@ kM <- kmeans(intensities,2)
 cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
 
 plot(cellExp, imageID=1)
+
 
 }
