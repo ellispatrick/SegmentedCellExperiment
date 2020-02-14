@@ -10,4 +10,4 @@
 NULL
 
 ## quiets concerns of R CMD check re: the x's etc that appear in pipelines
-if(getRversion() >= "2.15.1")  utils::globalVariables(c("x", "y", "cellType"))
+#if(getRversion() >= "2.15.1")  utils::globalVariables(c("x", "y", "cellType"))

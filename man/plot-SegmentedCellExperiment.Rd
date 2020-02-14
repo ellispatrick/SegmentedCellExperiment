@@ -2,6 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot-SegmentedCellExperiment}
 \alias{plot-SegmentedCellExperiment}
+\alias{plot}
 \title{A basic plot for SegmentedCellExperiment object}
 \arguments{
 \item{x}{A SegmentedCellExperiment object.}
@@ -14,6 +15,11 @@ A ggplot object.
 \description{
 This function generates a basic plot of the location and cellType data.
 }
+\section{usage}{
+
+`plot(x, imageID = NULL)`
+}
+
 \examples{
 ### Something that resembles cellProfiler data
 
@@ -38,7 +44,6 @@ intensities <- intensity(cellExp)
 kM <- kmeans(intensities,2)
 cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
 
-plot(cellExp, imageID=1)
-
+#plot(cellExp, imageID=1)
 
 }

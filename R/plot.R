@@ -1,6 +1,9 @@
 #' A basic plot for SegmentedCellExperiment object
 #' 
-#' This function generates a basic plot of the location and cellType data.
+#' This function generates a basic plot of the location and cellType data. 
+#' 
+#' @section usage:
+#' `plot(x, imageID = NULL)`
 #'
 #' @param x A SegmentedCellExperiment object.
 #' @param imageID The image that should be plotted.
@@ -31,13 +34,36 @@
 #' kM <- kmeans(intensities,2)
 #' cellType(cellExp) <- paste('cluster',kM$cluster, sep = '')
 #' 
-#' plot(cellExp, imageID=1)
+#' #plot(cellExp, imageID=1)
 #' 
-#' 
-#' @rdname plotSegmentedCellExperiment
-#' @importFrom ggplot2 ggplot aes geom_point theme_classic
 #' @name plot-SegmentedCellExperiment
+#' @rdname plot-SegmentedCellExperiment
+#' @aliases plot
+#' @importFrom ggplot2 ggplot aes geom_point theme_classic labs
+#' @importFrom rlang .data
 NULL
+
+plot.SegmentedCellExperiment <- function(cellData, imageID = NULL) {
+    
+    if (is.null(imageID)) {
+        imageID <- imageID(cellData)[1]
+    }
+    
+    loc <- as.data.frame(location(cellData, imageID = imageID))
+    if (is.na(loc$cellType[1])) {
+        ggplot(loc, aes(x = .data$x, y = .data$y)) + geom_point() + theme_classic() + labs(x = "x", y = "y")
+    } else {
+        ggplot(loc, aes(x = .data$x, y = .data$y, colour = .data$cellType)) + geom_point() + 
+            theme_classic() + labs(x = "x", y = "y", colour = "cell-type")
+    }
+}
+
+
+if (!isGeneric("plot")) setGeneric("plot", function(x, ...) standardGeneric("plot"))
+
+setMethod("plot", signature(x = "SegmentedCellExperiment"), function(x, ...) {
+    plot.SegmentedCellExperiment(x, ...)
+})
 
 plot.SegmentedCellExperiment <- function(cellData, imageID = NULL) {
 
@@ -47,18 +73,11 @@ plot.SegmentedCellExperiment <- function(cellData, imageID = NULL) {
     
     loc <- as.data.frame(location(cellData, imageID = imageID))
     if (is.na(loc$cellType[1])) {
-        ggplot(loc, aes(x = x, y = y)) + geom_point() + theme_classic()
+        ggplot(loc, aes(x = .data$x, y = .data$y)) + geom_point() + theme_classic() + labs(x = "x", y = "y")
     } else {
-        ggplot(loc, aes(x = x, y = y, colour = cellType)) + geom_point() + 
-            theme_classic()
+        ggplot(loc, aes(x = .data$x, y = .data$y, colour = .data$cellType)) + geom_point() + 
+            theme_classic() + labs(x = "x", y = "y", colour = "cell-type")
     }
 }
 
-
-if (!isGeneric("plot")) setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
-
-setMethod("plot", signature(x = "SegmentedCellExperiment", y = "missing"), function(x, 
-                                                                                    y, ...) {
-    plot.SegmentedCellExperiment(x, ...)
-})
 
