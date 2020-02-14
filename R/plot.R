@@ -3,7 +3,9 @@
 #' This function generates a basic plot of the location and cellType data.
 #'
 #' @param x A SegmentedCellExperiment object.
-#' @param imageID The image that should be plotted
+#' @param imageID The image that should be plotted.
+#' 
+#' @return A ggplot object.
 #' 
 #' @examples
 #' ### Something that resembles cellProfiler data

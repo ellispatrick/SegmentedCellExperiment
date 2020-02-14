@@ -2,9 +2,8 @@
 #'
 #' S4 Class for segmented spatial 'omics data
 #'
-#' See the README on
-#' \href{https://cran.r-project.org/package=googlesheets/README.html}{CRAN}
-#' or \href{https://github.com/jennybc/googlesheets#readme}{GitHub}
+#' Development version can be found on 
+#' \href{https://github.com/ellispatrick/SegmentedCellExperiment}{GitHub}
 #'
 #' @docType package
 #' @name SegmentedCellExperiment

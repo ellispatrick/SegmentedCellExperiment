@@ -7,9 +7,12 @@
 plot.SegmentedCellExperiment(cellData, imageID = NULL)
 }
 \arguments{
-\item{imageID}{The image that should be plotted}
+\item{imageID}{The image that should be plotted.}
 
 \item{x}{A SegmentedCellExperiment object.}
+}
+\value{
+A ggplot object.
 }
 \description{
 This function generates a basic plot of the location and cellType data.
