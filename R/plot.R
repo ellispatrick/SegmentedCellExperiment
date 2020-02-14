@@ -1,4 +1,4 @@
-#' @title Basic plot for a SegmentedCellExperiment
+#' A basic plot for SegmentedCellExperiment object
 #' 
 #' This function generates a basic plot of the location and cellType data.
 #'
@@ -31,8 +31,10 @@
 #' 
 #' plot(cellExp, imageID=1)
 #' 
+#' @name plot.SegmentedCellExperiment
+#' 
 #' @rdname plotSegmentedCellExperiment
-#' @import ggplot2
+#' @importFrom ggplot2 ggplot aes geom_point theme_classic
 
 if (!isGeneric("plot")) setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
 
