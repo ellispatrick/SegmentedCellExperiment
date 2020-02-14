@@ -34,7 +34,7 @@
 #' @name plot.SegmentedCellExperiment
 #' 
 #' @rdname plotSegmentedCellExperiment
-#' @importFrom ggplot2 ggplot aes geom_point theme_classic
+#' @importFrom ggplot2 ggplot aes geom_point theme_classic .data
 
 if (!isGeneric("plot")) setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
 
