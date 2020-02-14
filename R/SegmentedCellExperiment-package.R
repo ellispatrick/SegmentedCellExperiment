@@ -6,7 +6,7 @@
 #' \href{https://github.com/ellispatrick/SegmentedCellExperiment}{GitHub}
 #'
 #' @docType package
-#' @name SegmentedCellExperiment
+#' @name SegmentedCellExperiment-package
 NULL
 
 ## quiets concerns of R CMD check re: the x's etc that appear in pipelines
