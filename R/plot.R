@@ -36,6 +36,9 @@
 #' 
 #' @rdname plotSegmentedCellExperiment
 #' @importFrom ggplot2 ggplot aes geom_point theme_classic
+#' @name plot-SegmentedCellExperiment
+NULL
+
 plot.SegmentedCellExperiment <- function(cellData, imageID = NULL) {
 
     if (is.null(imageID)) {
