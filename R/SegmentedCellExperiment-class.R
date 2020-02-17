@@ -103,11 +103,11 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
         }
         
         if (!is.null(spatialCoords)) {
-            cellData$x <- spatialCoords[1]
+            cellData$x <- cellData[,spatialCoords[1]]
         }
         
         if (!is.null(spatialCoords)) {
-            cellData$y <- spatialCoords[2]
+            cellData$y <- cellData[,spatialCoords[2]]
         }
         
         spatialCoords <- c("x", "y")
@@ -150,11 +150,11 @@ SegmentedCellExperiment <- function(cellData, cellProfiler = FALSE, spatialCoord
         }
         
         if (!is.null(spatialCoords)) {
-            cellData$x <- spatialCoords[1]
+            cellData$x <- cellData[,spatialCoords[1]]
         }
         
         if (!is.null(spatialCoords)) {
-            cellData$y <- spatialCoords[2]
+            cellData$y <- cellData[,spatialCoords[2]]
         }
         
 
